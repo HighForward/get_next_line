@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-int ft_strlen_gnl(char *s)
+int ft_strlen(char *s)
 {
 	int i;
 
@@ -22,37 +22,7 @@ int ft_strlen_gnl(char *s)
 	return (i);
 }
 
-void	ft_bzero(void *s, size_t n)
-{
-	unsigned char	*d;
-	unsigned int	i;
-
-	d = (unsigned char*)s;
-	i = 0;
-	while (i < n)
-	{
-		d[i] = 0;
-		i++;
-	}
-	s = (void*)d;
-}
-
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*temp;
-
-	if (nmemb == 0 || size == 0)
-	{
-		nmemb = 1;
-		size = 1;
-	}
-	if (!(temp = malloc(nmemb * size)))
-		return (NULL);
-	ft_bzero(temp, nmemb * size);
-	return (temp);
-}
-
-int	ft_strchr_gnl(char *s, char c)
+int	ft_strchr(char *s, char c)
 {
 	int		i;
 
@@ -63,14 +33,17 @@ int	ft_strchr_gnl(char *s, char c)
 			return (0);
 		i++;
 	}
-	return (i + 1);
+	return (i);
 }
 
-char *ft_strjoin_gnl(char const *s1, char const *s2)
+char *find_rest(char *s, int cut)
+{
+	return (&s[cut]);
+}
+
+char *ft_strjoin(char *s1, char *s2)
 {
 	char	*join;
-	char	*s;
-	char	*d;
 	int		j;
 	int		i;
 
@@ -78,20 +51,18 @@ char *ft_strjoin_gnl(char const *s1, char const *s2)
 	j = 0;
 	if (!s1 || !s2)
 		return (NULL);
-	s = (char*)s1;
-	d = (char*)s2;
-	if (!(join = (char*)malloc(sizeof(char) * ((ft_strlen_gnl(s)) + (ft_strlen_gnl(d)) + 1))))
+	if (!(join = (char*)malloc(sizeof(char) * ((ft_strlen(s1)) + (ft_strlen(s2)) + 1))))
 		return (NULL);
-	while (s[i])
+	while (s1[i])
 	{
-		join[j] = s[i];
+		join[j] = s1[i];
 		i++;
 		j++;
 	}
 	i = 0;
-	while(d[i])
+	while(s2[i])
 	{
-		join[j] = d[i];
+		join[j] = s2[i];
 		i++;
 		j++;
 	}

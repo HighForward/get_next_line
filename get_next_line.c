@@ -12,72 +12,73 @@
 
 #include "get_next_line.h"
 
+char *ft_read_fd(int fd)
+{
+	int ret;
+	char *buff;
+	char *temp;
+	char *line;
+
+	buff = malloc(sizeof(char) * BUFFER_SIZE + 1);
+	line = malloc(sizeof(char));
+
+	while ((ret = read(fd, buff, BUFFER_SIZE)) > 0)
+	{
+		buff[ret] = '\0';
+		temp = ft_strjoin(line, buff);
+		free(line);
+		line = temp;
+		if((ret = ft_strchr(line, '\n')) != 0)
+			break;
+	}
+	free(buff);
+	return(line);
+}
+
 char	*ft_strdup(char *s, int size)
 {
 	char	*dup;
 	int		i;
 
 	i = 0;
-	if (!(dup = (char*)malloc(sizeof(char) * size)))
+	if (!(dup = (char*)malloc(sizeof(char) * size + 1)))
 		return (NULL);
-	while (i < size - 1)
+	while (i < size)
 	{
 		dup[i] = s[i];
 		i++;
 	}
 	dup[i] = '\0';
+	free(s);
 	return (dup);
-}
-
-char *ft_get_reste(char *s)
-{
-	int i;
-	int size;
-	char *d;
-
-	size = ft_strlen_gnl(s);
-	d = (char*)malloc(sizeof(char) * size + 1);
-	i = 0;
-	
-	while (i < size)
-	{
-		d[i] = s[i];
-		i++;
-	}
-	d[i] = '\0';
-	return (d);
 }
 
 int	get_next_line(int fd, char **line)
 {
-	char buf[BUFFER_SIZE + 1];
-	char *full;
-	char *final;
 	static char *reste;
-	int ret;
+	char *final;
+	int cut;
 
-	if (reste == 0)
-		full = ft_calloc(1, 0);
-	else
-		full = ft_get_reste(reste);
-
-	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
+	if (fd > 0)
 	{
-		buf[ret] = '\0';
-		final = ft_strjoin_gnl(full, buf);
-		free(full);
-		full = final;
-		if ((ret = ft_strchr_gnl(full, '\n')) != 0)
+		if (reste == 0)
 		{
-			*line = ft_strdup(full, ret);
-			if (ret + 1 < ft_strlen_gnl(full))
+			final = ft_read_fd(fd);
+			cut = ft_strchr(final, '\n');
+			reste = &final[cut + 1];
+			*line = ft_strdup(final, cut);
+			return (1);
+		}
+		else
+		{
+			if ((cut = ft_strchr(reste, '\n')) == 0)
 			{
-				reste =  &full[ret];
+				
 			}
-			free(full);
-			return(1);
 		}
 	}
-	printf("EXIT");
+
+	//printf("%s", reste);
+	//printf("EXIT\n");
 	return (0);	
 }

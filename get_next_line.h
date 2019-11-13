@@ -20,10 +20,11 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+char *ft_read_fd(int fd);
 int get_next_line(int fd, char **line);
-int	ft_strchr_gnl(char *s, char c);
-int ft_strlen_gnl(char *s);
-char *ft_strjoin_gnl(char const *s1, char const *s2);
-void *ft_calloc(size_t nmemb, size_t size);
-void	ft_bzero(void *s, size_t n);
+int ft_strlen(char *s);
+int ft_strchr(char *s, char c);
+char *ft_strdup(char *s, int size);
+char *ft_strjoin(char *s1, char *s2);
+
 #endif
