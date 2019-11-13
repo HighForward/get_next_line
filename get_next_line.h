@@ -6,7 +6,7 @@
 /*   By: mbrignol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 10:50:45 by mbrignol          #+#    #+#             */
-/*   Updated: 2019/11/12 17:13:23 by mbrignol         ###   ########.fr       */
+/*   Updated: 2019/11/13 15:12:42 by mbrignol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 #include <stdio.h>
 
 int get_next_line(int fd, char **line);
-int ft_strchr_gnl(char *s, char c);
+int	ft_strchr_gnl(char *s, char c);
 int ft_strlen_gnl(char *s);
 char *ft_strjoin_gnl(char const *s1, char const *s2);
-char *ft_cutnext_gnl(char *s, int size);
-char *ft_cutfinal_gnl(char *s, int size);
+void *ft_calloc(size_t nmemb, size_t size);
+void	ft_bzero(void *s, size_t n);
 #endif

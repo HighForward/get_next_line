@@ -6,13 +6,13 @@
 /*   By: mbrignol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 10:50:07 by mbrignol          #+#    #+#             */
-/*   Updated: 2019/11/12 18:00:47 by mbrignol         ###   ########.fr       */
+/*   Updated: 2019/11/13 14:36:26 by mbrignol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int main()
+int main(int argc, char **argv)
 {
 	int fd;
 	int i;
@@ -22,11 +22,11 @@ int main()
 	i = 0;
 	line = (char**)malloc(sizeof(char*) * 9);
 	
-	fd = open("test", O_RDONLY);
+	fd = open(argv[1], O_RDONLY);
 
-	while(get_next_line(fd, &line[i]) == 1)
+	while (get_next_line(fd, &line[i]))
 	{
-		printf("#%s# < ligne\n", line[i]);
+		printf("ligne : %s\n", line[i]);
 		i++;
 	}
 }
