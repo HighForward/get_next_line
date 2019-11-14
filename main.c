@@ -20,10 +20,10 @@ int main(int argc, char **argv)
 
 	fd = 1;	
 	i = 0;
-	line = (char**)malloc(sizeof(char*) * 9);
+	line = (char**)malloc(sizeof(char*) * 80);
 	
 	fd = open(argv[1], O_RDONLY);
 
-	get_next_line(fd, &line[i]);
+	while(i < 29 && (get_next_line(fd, &line[i])) == 1)
 		printf("ligne : %s\n", line[i++]);
 }

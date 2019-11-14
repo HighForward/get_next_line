@@ -20,7 +20,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-char *ft_read_fd(int fd);
+char *ft_read_fd(int fd, char *line);
 int get_next_line(int fd, char **line);
 int ft_strlen(char *s);
 int ft_strchr(char *s, char c);
