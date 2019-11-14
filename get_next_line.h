@@ -6,7 +6,7 @@
 /*   By: mbrignol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 10:50:45 by mbrignol          #+#    #+#             */
-/*   Updated: 2019/11/13 15:12:42 by mbrignol         ###   ########.fr       */
+/*   Updated: 2019/11/14 14:07:31 by mbrignol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,18 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-char *ft_read_fd(int fd);
+typedef struct	s_list
+{
+	char *str;
+	int ret;
+}				t_list;
+
+//t_list ft_read_fd(int fd, char *line);
 int get_next_line(int fd, char **line);
 int ft_strlen(char *s);
 int ft_strchr(char *s, char c);
-char *ft_strdup(char *s, int size);
+//char *ft_strdup(char *s, int size);
 char *ft_strjoin(char *s1, char *s2);
+char *ft_strnew(int size);
 
 #endif

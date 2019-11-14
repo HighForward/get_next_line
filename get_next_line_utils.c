@@ -6,7 +6,7 @@
 /*   By: mbrignol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 11:36:20 by mbrignol          #+#    #+#             */
-/*   Updated: 2019/11/13 15:14:17 by mbrignol         ###   ########.fr       */
+/*   Updated: 2019/11/14 12:46:26 by mbrignol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,17 @@ int ft_strlen(char *s)
 	return (i);
 }
 
+char *ft_strnew(int size)
+{
+	char *new;
+	
+	new = malloc(sizeof(char) * size + 1);
+	new[size] = '\0';
+	while (size)
+		new[size--] = '\0';
+	return (new);
+}
+
 int	ft_strchr(char *s, char c)
 {
 	int		i;
@@ -33,12 +44,7 @@ int	ft_strchr(char *s, char c)
 			return (0);
 		i++;
 	}
-	return (i);
-}
-
-char *find_rest(char *s, int cut)
-{
-	return (&s[cut]);
+	return (i + 1);
 }
 
 char *ft_strjoin(char *s1, char *s2)
