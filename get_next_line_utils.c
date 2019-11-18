@@ -3,48 +3,74 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbrignol <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mbrignol <mbrignol@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/11/12 11:36:20 by mbrignol          #+#    #+#             */
-/*   Updated: 2019/11/14 12:46:26 by mbrignol         ###   ########.fr       */
+/*   Created: 2019/11/15 10:59:23 by mbrignol          #+#    #+#             */
+/*   Updated: 2019/11/18 12:47:11 by mbrignol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int ft_strlen(char *s)
+char	*ft_strnew(int size)
 {
-	int i;
+	char *new;
 
+	if (!(new = malloc(sizeof(char) * size + 1)))
+		return (NULL);
+	new[size] = '\0';
+	while (size--)
+		new[size] = '\0';
+	return (new);
+}
+
+int		ft_strlen(char *s)
+{
+	int	i;
+	if (!s)
+		return (0);
 	i = 0;
 	while (s[i])
 		i++;
 	return (i);
 }
 
-char *ft_strnew(int size)
+char	*ft_strncat(char *dest, char *src, unsigned int nb)
 {
-	char *new;
-	
-	new = malloc(sizeof(char) * size + 1);
-	new[size] = '\0';
-	while (size)
-		new[size--] = '\0';
-	return (new);
+	unsigned int i;
+	unsigned int size;
+
+	size = ft_strlen(dest);
+	i = 0;
+	while (i < nb && src[i])
+	{
+		dest[size + i] = src[i];
+		i++;
+	}
+	dest[size + i] = '\0';
+	return(dest);
 }
 
-int	ft_strchr(char *s, char c)
+int free_string(char **str, int value)
+{
+	if (*str)
+		free(*str);
+	*str = NULL;
+	return (value);
+}
+
+int		ft_is_line(char *s)
 {
 	int		i;
 
 	i = 0;
-	while (s[i] != c)
-	{
-		if (s[i] == '\0')
-			return (0);
+	if (!s)
+		return (0);
+	while (s[i] && s[i] != '\n')
 		i++;
-	}
-	return (i + 1);
+	if (s[i] == '\n')
+		return (1);
+	return (0);
 }
 
 char *ft_strjoin(char *s1, char *s2)

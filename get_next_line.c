@@ -6,94 +6,85 @@
 /*   By: mbrignol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 10:50:27 by mbrignol          #+#    #+#             */
-/*   Updated: 2019/11/14 14:18:57 by mbrignol         ###   ########.fr       */
+/*   Updated: 2019/11/18 20:45:06 by mbrignol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static t_list ft_read_fd(int fd, char *line)
+static int ft_read_fd(int fd, char **rest)
 {
-	t_list list;
-	int ret;
-	char *buff;
-	char *temp;
-	int i;
-	
-	i = 0;
-	buff = malloc(sizeof(char) * BUFFER_SIZE + 1);
-
-	while ((list.ret = read(fd, buff, BUFFER_SIZE)) > 0)
-	{
-		buff[list.ret] = '\0';
-		temp = ft_strjoin(line, buff);
-		free(line);
-		line = temp;
-		if((ret = ft_strchr(line, '\n')) != 0)
-			break;
-	}
-	free(buff);
-	list.str = line;
-	return(list);
-}
-
-static char	*ft_strdup(char *s, int size)
-{
-	char	*dup;
-	int		i;
-
-	i = 0;
-	if (!(dup = (char*)malloc(sizeof(char) * size + 1)))
-		return (NULL);
-	while (i < size)
-	{
-		dup[i] = s[i];
-		i++;
-	}
-	dup[i] = '\0';
-	return (dup);
-}
-
-int	get_next_line(int fd, char **line)
-{
-	static char *reste;
-	t_list final;
+	char *buffer;
 	char *str;
-	int cut;
+	int size_read;
 
-	if (reste != 0)
-		str = ft_strdup(reste, (ft_strlen(reste)));
-	else if (reste == 0)
-		str = ft_strnew(0);
-	if (fd > 0)
+	if (!(buffer = ft_strnew(BUFFER_SIZE)))
+		return (FAILURE);
+	if ((size_read = read(fd, buffer, BUFFER_SIZE)) <= 0)
 	{
-		if ((ft_strchr(str, '\n')) == 0)
+		free(buffer);
+		return (size_read);
+	}
+	buffer[size_read] = '\0';
+	if (!(str = ft_strnew(ft_strlen(*rest) + BUFFER_SIZE)))
+		return (FAILURE);
+	if (*rest)
+	{
+		str = ft_strncat(str, *rest, ft_strlen(*rest));
+		free(*rest);
+	}
+	*rest = ft_strncat(str, buffer, size_read);
+	free(buffer);
+	if (!(ft_is_line(str)))
+		return (ft_read_fd(fd, rest));
+	return (SUCCESS);
+}
+
+static int ft_split_rest(char **rest, char **line)
+{
+	int i;
+	int size;
+	char *temp_line;
+	char *temp;
+
+	i = 0;
+	while ((*rest)[i] && (*rest)[i] != '\n')
+		i++;
+	if (!(temp_line = ft_strnew(i)))
+		return (FAILURE);
+	*line = ft_strncat(temp_line, *rest, i);
+	size = ft_strlen(*rest) - i;
+	if (size == 0)
+		return (free_string(rest, END_FILE));
+	if ((temp = ft_strnew(size)))
+	{
+		temp = ft_strncat(temp, &(*rest)[i + 1], size - 1);
+		free(*rest);
+		*rest = temp;
+		return (SUCCESS);
+	}
+	return (free_string(rest, FAILURE));
+}
+
+int get_next_line(int fd, char **line)
+{
+	static char *rest = NULL;
+	int error;
+
+	error = 0;
+	if (fd < 0 || !line || BUFFER_SIZE <= 0)
+		return (FAILURE);
+	if (!ft_is_line(rest))
+	{
+		if (ft_read_fd(fd, &rest) == FAILURE)
+			return (free_string(&rest, FAILURE));
+		if (!rest)
 		{
-			final = ft_read_fd(fd, str);
-			if (final.ret == 0)
-				return(0);
-			cut = ft_strchr(final.str, '\n');
-			reste = &final.str[cut];
-			*line = ft_strdup(final.str, cut - 1);
-			free(final.str);
-			return(1);
-		}
-		else if ((cut = ft_strchr(str, '\n')) != 0)
-		{
-			if (cut == 1)
-			{
-				*line = ft_strnew(0);
-				reste = &str[1];
-				return(1);
-			}
-			else if (cut > 1)
-			{
-				reste = &str[cut];
-				*line = ft_strdup(str, cut - 1);
-				free(str);
-				return(1);
-			}
+			*line = ft_strnew(0);
+			return (END_FILE);
 		}
 	}
-	return (0);	
+	if ((error = ft_split_rest(&rest, line)) != SUCCESS)
+		return (free_string(&rest, 0));
+	return (SUCCESS);
 }
