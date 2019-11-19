@@ -6,85 +6,93 @@
 /*   By: mbrignol <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/12 10:50:27 by mbrignol          #+#    #+#             */
-/*   Updated: 2019/11/18 20:45:06 by mbrignol         ###   ########.fr       */
+/*   Updated: 2019/11/19 13:47:56 by mbrignol         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int ft_read_fd(int fd, char **rest)
+static int free_string(char **str, int value)
+{
+	if (*str)
+		free(*str);
+	*str = NULL;
+	return (value);
+}
+
+static int ft_read_fd(int fd, char **str)
 {
 	char *buffer;
-	char *str;
+	char *temp;
 	int size_read;
 
 	if (!(buffer = ft_strnew(BUFFER_SIZE)))
-		return (FAILURE);
+		return (KO);
 	if ((size_read = read(fd, buffer, BUFFER_SIZE)) <= 0)
 	{
 		free(buffer);
 		return (size_read);
 	}
 	buffer[size_read] = '\0';
-	if (!(str = ft_strnew(ft_strlen(*rest) + BUFFER_SIZE)))
-		return (FAILURE);
-	if (*rest)
+	if (!(temp = ft_strnew(ft_strlen(*str) + size_read)))
+		return (KO);
+	if (*str)
 	{
-		str = ft_strncat(str, *rest, ft_strlen(*rest));
-		free(*rest);
+		temp = ft_strncat(temp, *str, ft_strlen(*str));
+		free(*str);
 	}
-	*rest = ft_strncat(str, buffer, size_read);
+	*str = ft_strncat(temp, buffer, size_read);
 	free(buffer);
-	if (!(ft_is_line(str)))
-		return (ft_read_fd(fd, rest));
-	return (SUCCESS);
+	if (!ft_is_line(*str))
+		return (ft_read_fd(fd, str));
+	return (OK);
 }
 
-static int ft_split_rest(char **rest, char **line)
+static int ft_split_str(char **str, char **line)
 {
-	int i;
-	int size;
-	char *temp_line;
 	char *temp;
+	char *temp_line;
+	int size_line;
+	int size_rest;
 
-	i = 0;
-	while ((*rest)[i] && (*rest)[i] != '\n')
-		i++;
-	if (!(temp_line = ft_strnew(i)))
-		return (FAILURE);
-	*line = ft_strncat(temp_line, *rest, i);
-	size = ft_strlen(*rest) - i;
-	if (size == 0)
-		return (free_string(rest, END_FILE));
-	if ((temp = ft_strnew(size)))
+	size_line = 0;
+	while ((*str)[size_line] && (*str)[size_line] != '\n')
+		size_line++;
+	if (!(temp_line = ft_strnew(size_line)))
+		return (KO);
+	*line = ft_strncat(temp_line, *str, size_line);
+	size_rest = ft_strlen(*str) - size_line;
+	if (size_rest == 0)
+		return (free_string(str, END));
+	if ((temp = ft_strnew(size_rest)))
 	{
-		temp = ft_strncat(temp, &(*rest)[i + 1], size - 1);
-		free(*rest);
-		*rest = temp;
-		return (SUCCESS);
+		temp = ft_strncat(temp, &(*str)[size_line + 1], size_rest - 1);
+		free(*str);
+		*str = temp;
+		return (OK);
 	}
-	return (free_string(rest, FAILURE));
+	return (free_string(str, KO));
 }
 
 int get_next_line(int fd, char **line)
 {
-	static char *rest = NULL;
-	int error;
+	static char *str;
+	int cut;
 
-	error = 0;
 	if (fd < 0 || !line || BUFFER_SIZE <= 0)
-		return (FAILURE);
-	if (!ft_is_line(rest))
+		return (KO);
+
+	if (!ft_is_line(str))
 	{
-		if (ft_read_fd(fd, &rest) == FAILURE)
-			return (free_string(&rest, FAILURE));
-		if (!rest)
+		if (ft_read_fd(fd, &str) == KO)
+			return (KO);
+		if (!str)
 		{
 			*line = ft_strnew(0);
-			return (END_FILE);
+			return (END);
 		}
 	}
-	if ((error = ft_split_rest(&rest, line)) != SUCCESS)
-		return (free_string(&rest, 0));
-	return (SUCCESS);
+	if ((cut = ft_split_str(&str, line)) != OK)
+		return (free_string(&str, END));
+	return (OK);
 }

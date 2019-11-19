@@ -51,14 +51,6 @@ char	*ft_strncat(char *dest, char *src, unsigned int nb)
 	return(dest);
 }
 
-int free_string(char **str, int value)
-{
-	if (*str)
-		free(*str);
-	*str = NULL;
-	return (value);
-}
-
 int		ft_is_line(char *s)
 {
 	int		i;
